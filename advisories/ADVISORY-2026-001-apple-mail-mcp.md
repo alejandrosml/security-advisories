@@ -3,12 +3,13 @@
 | Metadata | Details |
 | :--- | :--- |
 | **Advisory ID** | `ASML-2026-001` |
-| **Target Software** | `apple-mail-mcp` (Superior Technologies / `@sweetrb`) |
+| **Target Software** | [`sweetrb/apple-mail-mcp`](https://github.com/sweetrb/apple-mail-mcp) (Superior Technologies Research LLC / `@sweetrb`) |
 | **Affected Version** | `<= 2.20.52` (verified at commit `4bebdde`) |
+| **Patched Version** | **`v2.20.54`** ([Release v2.20.54](https://github.com/sweetrb/apple-mail-mcp/releases/tag/v2.20.54) · [PR #369](https://github.com/sweetrb/apple-mail-mcp/pull/369) · commit [`0dab9c7`](https://github.com/sweetrb/apple-mail-mcp/commit/0dab9c7)) |
 | **Vulnerability Class** | CWE-22 (Improper Limitation of a Pathname to a Restricted Directory) · CWE-73 (External Control of File Name or Path) · CWE-284 (Improper Access Control / Missing MCP Tool Safety Annotations) |
-| **Severity** | **Critical** (Arbitrary File Creation under `$HOME` → macOS Persistence / RCE & Config Poisoning via Indirect Prompt Injection) |
+| **Severity** | **Critical / High (CVSS 8.6)** (Arbitrary File Creation under `$HOME` → macOS Persistence / RCE & Config Poisoning via Indirect Prompt Injection) |
 | **Discoverer** | **Alejandro San Martin Lamas** ([@alejandrosml](https://github.com/alejandrosml)) — RNCP Level 7 Digital Security Expert |
-| **Disclosure Mode** | Coordinated Vulnerability Disclosure (CVD) — Vendor contact: Rob Sweet |
+| **Disclosure Mode** | Coordinated Vulnerability Disclosure (CVD) — Vendor contact: Rob Sweet (publicly credited in `v2.20.54`) |
 
 ---
 
@@ -81,6 +82,15 @@ sequenceDiagram
    - Disable direct mail dispatch by default; require an explicit user opt-in environment variable and a two-step out-of-band confirmation before any message leaves the Mac.
 3. **Declare explicit MCP `ToolAnnotations` on every tool:**
    - Mark pure queries with `readOnlyHint: true, destructiveHint: false` and mutating/network actions with `readOnlyHint: false` and appropriate `destructiveHint` / `openWorldHint` flags.
+
+---
+
+## Disclosure Timeline & Vendor Acknowledgment
+
+- **2026-11-03:** Vulnerability discovered via static source code review of `apple-mail-mcp` `v2.20.52` (commit `4bebdde`) and reported privately to Rob Sweet (Superior Technologies Research LLC) following the repository's `SECURITY.md`.
+- **2026-11-04:** Upstream maintainer merged [PR #369](https://github.com/sweetrb/apple-mail-mcp/pull/369) (commit [`0dab9c7`](https://github.com/sweetrb/apple-mail-mcp/commit/0dab9c7)) and released [**`v2.20.54`**](https://github.com/sweetrb/apple-mail-mcp/releases/tag/v2.20.54), enforcing `isProtectedPath` and a strict document-folder allowlist on attachment saves, declaring MCP annotations (`readOnlyHint`, `destructiveHint`, `openWorldHint`) on every tool, and publicly crediting **Alejandro San Martin Lamas** in both the commit message and release notes:
+  > *"Reported privately by Alejandro San Martin Lamas — thank you."*
+- **2026-11-09:** Public advisory published following upstream remediation.
 
 ---
 
